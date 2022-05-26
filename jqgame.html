@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>jQuery Game</title>
+    <style>
+        *{margin: 0;padding: 0;box-sizing: border-box;}
+        h1{text-align: center;background-color: coral;}
+        .hide{visibility: hidden;}
+        #gridm{
+         /* display: grid;
+         grid-template-columns: 20% 20% 20% 20% 20%;  */
+        width: 350px;height: 500px;background-color: gray;
+        transform: translate(-50%,0%);
+        position: relative; left: 50%;top: 5px;
+        overflow: hidden;
+        }
+        #over{width: 500px;line-height: 100px; background-color: coral;z-index: 2;display: none;text-align: center;
+            position: absolute; top: 55%;left: 50%;transform: translate(-50%,-50%);}
+        #strtgame{width: 500px;height: 200px; background-color: coral;z-index: 2;text-align: center;
+            position: absolute; top: 55%;left: 50%;transform: translate(-50%,-50%);}
+            #strtgame h3{text-align: center; margin: 20px;}
+
+        .lines{
+            border: 2px dashed rgb(173, 173, 173);
+            position: absolute;
+            width: 20px; height: 100px; background-color: white;
+            margin: 0 0 10px 165px;z-index: -1;
+        }
+        /* .sg{border: 2px dashed rgb(173, 173, 173); /* float: left; 
+            position: relative;
+            width: 20px; height: 100px; background-color: white;
+            margin: 0 0 10px 165px; top: -100px;
+          
+        }*/
+        /* .ssg{
+            animation: alter 0.7s infinite;
+        } */
+        /* @keyframes alter {
+             0%   { left:0%; top:-95px;}
+             /* 50%   { left:0%; top:-42.5px;} */
+            /* 100% { left:0%; top:10px;}} */ 
+        #score{position: relative;top: 100px;left: 20%; width: 100px;line-height: 50px;background-color: chartreuse;padding: 10px;text-align: center;}
+        .cars{position: absolute;font-size: 35px;top: 10px;margin: 10px;background-color: blue;height: 22px;width: 30px;}
+        .carsspan{position: relative;transform:translate(-50%,-50%);top: -100%;left: -25%;}
+        #carm{position: absolute;left: 50%;top: 94%;font-size: 45px;transform: translate(-50%,-50%);
+             background-color: brown; height: 25px;width: 40px;}
+            #cspan{position: relative;transform:translate(-50%,-50%);top: -100%;left: -25%;}
+            /* animation-name: carrun;  */
+           /* animation-duration: 4s;
+            animation-iteration-count: 3;
+
+         /* button{width: 100px; height: 20px;} */
+        /*#btn_l{position: absolute;left: 10px; bottom: -1px;}*/
+        /* #btn_r{position: absolute;right: 10px;bottom: -1px;}  */
+    </style>
+</head>
+<body>
+    <h1>jQuery Car Game</h1>
+    
+    <!-- <div id="gridm" >
+        
+        <div class="hide"> -->
+            <!-- <div class="sg" id="sgp"></div>
+            <div class="sg"></div>
+            <div class="sg"></div>
+            <div class="sg"></div>
+            <div class="sg"></div>
+            <div class="sg"></div> -->
+            <!-- <div id="carm">&#128660;</div> -->
+            <!-- <div class="sg">5</div> -->
+            <!-- <div id="btn_l"><button></button></div>-->
+            <!-- <div class="cars">&#128664;</div>
+            <div class="cars">&#128664;</div>
+            <div class="cars">&#128664;</div>
+            <div class="cars">&#128664;</div>
+            <div class="cars">&#128664;</div>
+        </div> 
+    </div>-->
+    <div id="strtgame">
+        <h3> Press enter butten paly the game </h3>
+    </div>
+        <!-- <div id="btn_r"><button></button></div>  -->
+    <script>
+    //    function hello()
+    //    {
+        const body=document.querySelector('body');
+        const score = document.createElement("div");
+        score.setAttribute("id","score");
+        score.setAttribute("class","hide");
+        // score.innerHTML="score:";
+        body.appendChild(score);
+
+        const over = document.createElement("div");
+        over.setAttribute("id","over");
+        // over.setAttribute("class","hide");
+        // over.innerHTML="score:over";
+        body.appendChild(over);
+
+        const gameground=document.createElement("div");
+        gameground.setAttribute("id","gridm");
+        body.appendChild(gameground);
+
+        const gamearea= document.createElement("div");
+        gamearea.setAttribute("class","hide");
+        gameground.appendChild(gamearea);
+
+        const carm=document.createElement("div");
+        carm.setAttribute("id","carm");
+        // carm.innerHTML="&#128660;";
+        gamearea.appendChild(carm);
+        const cspan=document.createElement("span");
+        cspan.setAttribute("id","cspan");
+        cspan.innerHTML="&#128660;";
+        carm.appendChild(cspan);
+
+        let plyer={speed: 0.5,score:0};
+        let game={stop:0};
+        // const textl2 = document.createTextNode("score:");
+        // score.appendChild(textl2);
+        // const gameground=document.querySelector('#gridm');
+        // const gamepaly=document.querySelector('.hide');
+        for (let x = 0; x < 10; x++) {
+                    const cars=document.createElement('div');
+                    cars.setAttribute("class","cars");
+                    cars.y=((x+1)*130)*-1;
+                    cars.style.top=cars.y+"px";
+                    cars.style.left=Math.floor(Math.random()*290)+"px";
+                    gamearea.appendChild(cars); 
+                    // cars.innerHTML="&#128664;";
+                const carsspan=document.createElement("span");
+                carsspan.setAttribute("class","carsspan");
+                carsspan.innerHTML="&#128664;";
+                cars.appendChild(carsspan);
+        }
+        
+
+        function movecars(carm) {
+                let mcars =document.querySelectorAll('.cars');
+                mcars.forEach(function(item){
+                    if (colid(carm,item)) {
+                        console.log("boom hit");
+                        gameend();
+                     }//console.log(item);console.log(carm);
+                    if (item.y>=500) {
+                        let random=Math.floor(Math.random()*290) ;
+                        item.style.left=random+"px"; 
+                        // if (random==35 && random==105 && random==105 && random==245 && random==315) { item.style.left=random+"px"; }
+                        //  if (random=105 ) { item.style.left=random+"px";}
+                        //  if (random=175 ) { item.style.left=random+"px";}
+                        //  if (random=245 ) { item.style.left=random+"px";}
+                        // if (random=315 ) { item.style.left=random+"px";}
+                        item.y = -100;
+                        }
+                        item.y += plyer.speed+0.5;
+                    item.style.top=item.y+"px";
+                });
+         }
+        for (let x = 0; x < 5; x++) {
+                    const rodeline=document.createElement('div');
+                    rodeline.setAttribute("class","lines");
+                    rodeline.y=(x*120);
+                    rodeline.style.top=rodeline.y+"px";
+                    gamearea.appendChild(rodeline); 
+        }
+        function movelines() {
+                let sga =document.querySelectorAll('.lines');
+                sga.forEach(function(item){
+                    if (item.y>=500) {
+                        item.y -=600;
+                    }
+                    // var d = $(sga).position();
+                    // let rodel =lines.getBoundingClientRect(); 
+                        item.y += plyer.speed;
+                    item.style.top=item.y+"px";
+                });
+         }
+         function colid(a,b) {
+            let ar =a.getBoundingClientRect(); 
+            let br =b.getBoundingClientRect(); 
+            // console.log(br);console.log(ar);
+             return !((ar.bottom < br.top)|| (ar.top > br.bottom)|| (ar.right< br.left)|| (ar.left> br.right));
+         }
+         function gameend() {
+             game={stop:1};
+             $("#over").css("display","block");
+             over.innerHTML="Your Total Score: "+plyer.score+"<br>"+"Press enter butten paly new game ";
+             $("#carm").animate({ top: '94%',left:'50%' },10, 'swing');
+            $("carm").css("top","0");
+            // function keypress(e){
+            //     if (e.keyCode ==70 )
+            //     {
+            //         ani();
+            //     }
+            // }
+
+
+             
+         }
+            function playani() {
+                    window.requestAnimationFrame(gamepaly);
+            }  
+            function gamepaly() {
+                // console.log(game.stop);
+                let s=game.stop;
+                if (s==0) {
+                    movelines();
+                    movecars(carm);
+                       window.requestAnimationFrame(gamepaly);
+                       plyer.score++;
+                       score.innerHTML="score:"+plyer.score; 
+                    }
+            }
+             
+        $(document).ready(function(){
+            
+                $("body").keypress(function ani() {
+                    $("#strtgame").css("display","none");
+                    $("#over").css("display","none");
+                    $(".hide").css("visibility","visible");
+                    plyer.score= 0;
+                    game.stop=0; 
+                    playani() ;
+                });
+
+                $("body").on('keydown', function (event) {
+                const car =$("#carm");
+                let rode =carm.getBoundingClientRect(); 
+                // console.log(rode);
+                    if (event.keyCode == 38 && rode.y >137) {   
+                            car.animate({top:'-=50px', },200, 'swing');
+                            if (rode.y >137) {
+                            $(".sg").addClass("ssg");    
+                            }  
+                        // var d=pos = $(car).position();console.log(d.top);
+                        // if(d.top>55){}
+                        // else { alert(1); car.animate({top:'-=0px', },600, 'swing'); }        
+                    }
+                  
+                    else if (event.keyCode == 40 && rode.y <526) 
+                    {   
+                        car.animate({ top: '+=50px', },200, 'swing');          
+                    }
+                    else if (event.keyCode == 37 && rode.x >435) 
+                    {   
+                        car.animate({ left: '-=70px', },200, 'swing');          
+                    }
+                    else if (event.keyCode == 39 && rode.x <610) 
+                    {   
+                        car.animate({ left: '+=70px', },200, 'swing');          
+                    }
+                   
+                });  
+            
+         });  
+            //  setInterval(function () {element.innerHTML += "Hello"}, 1000);
+
+            
+       
+
+
+       
+       
+
+        
+        // document.addEventListener('click',playgame);
+        // document.addEventListener('keyup',keyUp);
+        // function keyDown(e) {
+        //     e.preventDefault();
+        //     console.log(e.key);
+        // }
+        // function keyUp(e) {
+        //     e.preventDefault();
+            
+                // function playani() {
+                //         // $(".sg").css("top","0px");
+                //         $(".sg").animate({top:'99px'},1000);
+                //         window.requestAnimationFrame(gamepaly);
+                //         // $(".sg").animate({top:'10px'},100);
+                // }
+                // function gamepaly() {
+                //         $(".sg").animate({top:'399px'},1000);
+                //         // $(".sg").css("top","0px");
+                //         console.log("hy i am clicked");
+                //         window.requestAnimationFrame(playani);
+                //         // gamepaly();
+                // }
+                
+        
+    //    }
+                
+//   hello();
+// $(document).ready(function(){
+//     $("body").on('keydown', function (event){
+//         let mcar=$("#carm");
+//       if(event.keyCode==70){
+//         var bottom = mcar.top + $mcar.outerHeight(true);
+//         console.log(bottom);
+//         //    $("#carm").css("bottom","0px");
+//         alert(1);
+      
+//   }
+//     });
+
+// });
+  
+    </script>
+    
+    
+</body>
+</html>
